@@ -25,7 +25,8 @@ var svg = d3
   .attr("height", svgHeight);
 
 var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .classed("chart",true);
 
 // Import data from the data.csv file
 // =================================
@@ -70,13 +71,11 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
 
 
 
-  // Step 6: Set up the y-axis domain
+  // Set up the y-axis domain
   // ==============================================
   // @NEW! determine the max y value
-  // find the max of the morning data
   var povertyMax = d3.max(targetData, d => d.poverty);
 
-  // find the max of the evening data
   var healthcareMax = d3.max(targetData, d => d.healthcare);
 
   // // Use the yMax value to set the yLinearScale domain
@@ -111,7 +110,8 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("cx", d => xLinearScale(d.poverty))
     .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "15")
-    .attr("fill", "lightblue");
+    // .attr("fill", "lightblue")
+    .classed("stateCircle",true);
   var texts = chartGroup.selectAll("textsGroup1")
     .data(targetData)
     .enter()
@@ -120,7 +120,8 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x", d => xLinearScale(d.poverty))
     .attr("y", d => yLinearScale(d.healthcare)+5)
     .text(function(d){return d.abbr})
-    .attr("fill","white");
+    // .attr("fill","white")
+    .classed("stateText",true);
 
 
 
@@ -129,21 +130,21 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "Black")
+    .classed("active",true)
     .text("In Poverty (%)");
 
   chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 40})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "lightgrey")
+    .classed("inactive",true)
     .text("Age (Median)");
 
   chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 60})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "lightgrey")
+    .classed("inactive",true)
     .text("Household Income (Median)");
 
   // Add Y legend
@@ -153,7 +154,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "lightgrey")
+    .classed("inactive",true)
     .text("Obese (%)");
 
   chartGroup.append("text")
@@ -162,7 +163,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "lightgrey")
+    .classed("inactive",true)
     .text("Smokes (%)");
 
   chartGroup.append("text")
@@ -171,25 +172,25 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
-    .attr("fill", "Black")
+    .classed("active",true)
     .text("Lacks Healthcare (%)");
 
-//   // Step 1: Append a div to the body to create tooltips, assign it a class
-//   // =======================================================
-//   var toolTip = d3.select("body").append("div")
-//   .attr("class", "tooltip");
+  // Step 1: Append a div to the body to create tooltips, assign it a class
+  // =======================================================
+  var toolTip = d3.select("div#scatter").append("div")
+  .classed("d3-tip",true);
 
-//   // Step 2: Add an onmouseover event to display a tooltip
-//   // ========================================================
-//   circlesMorning.on("mouseover", function(d, i) {
-//     toolTip.style("display", "block");
-//     toolTip.html(`Donut craving level: <strong>${d.morning}</strong>` )
-//       .style("left", d3.event.pageX + "px")
-//       .style("top", d3.event.pageY + "px");
-//   })
-//   // Step 3: Add an onmouseout event to make the tooltip invisible
-//   .on("mouseout", function() {
-//     toolTip.style("display", "none");
-//   });
+  // Step 2: Add an onmouseover event to display a tooltip
+  // ========================================================
+  circles.on("mouseover", function(d, i) {
+    toolTip.style("display", "block");
+    toolTip.html(`Donut craving level: <strong></strong>` )
+      .style("left", d3.event.pageX + "px")
+      .style("top", d3.event.pageY + "px");
+  })
+  // Step 3: Add an onmouseout event to make the tooltip invisible
+  .on("mouseout", function() {
+    toolTip.style("display", "none");
+  });
 
 });
