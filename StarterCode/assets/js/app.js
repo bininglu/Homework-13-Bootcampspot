@@ -132,38 +132,38 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("fill", "Black")
     .text("In Poverty (%)");
 
-  // chartGroup.append("text")
-  //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 40})`)
-  //   .attr("text-anchor", "middle")
-  //   .attr("text-size", "16px")
-  //   .attr("fill", "lightgrey")
-  //   .text("Age (Median)");
+  chartGroup.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + margin.top + 40})`)
+    .attr("text-anchor", "middle")
+    .attr("text-size", "16px")
+    .attr("fill", "lightgrey")
+    .text("Age (Median)");
 
-  // chartGroup.append("text")
-  //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 60})`)
-  //   .attr("text-anchor", "middle")
-  //   .attr("text-size", "16px")
-  //   .attr("fill", "lightgrey")
-  //   .text("Household Income (Median)");
+  chartGroup.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + margin.top + 60})`)
+    .attr("text-anchor", "middle")
+    .attr("text-size", "16px")
+    .attr("fill", "lightgrey")
+    .text("Household Income (Median)");
 
   // Add Y legend
-  // chartGroup.append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 0 - margin.left+20)
-  //   .attr("x",0 - (height / 2))
-  //   .attr("text-anchor", "middle")
-  //   .attr("text-size", "16px")
-  //   .attr("fill", "lightgrey")
-  //   .text("Obese (%)");
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left+20)
+    .attr("x",0 - (height / 2))
+    .attr("text-anchor", "middle")
+    .attr("text-size", "16px")
+    .attr("fill", "lightgrey")
+    .text("Obese (%)");
 
-  // chartGroup.append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 0 - margin.left+40)
-  //   .attr("x",0 - (height / 2))
-  //   .attr("text-anchor", "middle")
-  //   .attr("text-size", "16px")
-  //   .attr("fill", "lightgrey")
-  //   .text("Smokes (%)");
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left+40)
+    .attr("x",0 - (height / 2))
+    .attr("text-anchor", "middle")
+    .attr("text-size", "16px")
+    .attr("fill", "lightgrey")
+    .text("Smokes (%)");
 
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
