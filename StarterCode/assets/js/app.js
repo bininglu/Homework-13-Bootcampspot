@@ -56,7 +56,10 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
 
   //   console.log(data.selectX);
   // });
-  // var activeY;
+  var activeX = "poverty";
+  var activeY = "healthcare";
+  var prevX = activeX;
+  var prevY = activeY;
  
 
   // Create the scales for the chart
@@ -74,9 +77,9 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
   // Set up the y-axis domain
   // ==============================================
   // @NEW! determine the max y value
-  var povertyMax = d3.max(targetData, d => d.poverty);
+  // var povertyMax = d3.max(targetData, d => d.poverty);
 
-  var healthcareMax = d3.max(targetData, d => d.healthcare);
+  // var healthcareMax = d3.max(targetData, d => d.healthcare);
 
   // // Use the yMax value to set the yLinearScale domain
   // yLinearScale.domain([0, yMax]);
@@ -97,12 +100,16 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .call(bottomAxis);
   // Add y-axis
   chartGroup.append("g").call(leftAxis);
-  
 
 
   // Set up circle generators
   // ==============================================
   // append circles to data points
+  
+  // var activeX = "poverty";
+  // var activeY = "healthcare";
+
+
   var circles = chartGroup.selectAll("circlesGroup1")
     .data(targetData)
     .enter()
@@ -110,9 +117,8 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("cx", d => xLinearScale(d.poverty))
     .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "15")
-    // .attr("fill", "lightblue")
     .classed("stateCircle",true);
-  var texts = chartGroup.selectAll("textsGroup1")
+  var texts = chartGroup.selectAll("circlesGroup1")
     .data(targetData)
     .enter()
     .append("text")
@@ -120,32 +126,62 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x", d => xLinearScale(d.poverty))
     .attr("y", d => yLinearScale(d.healthcare)+5)
     .text(function(d){return d.abbr})
-    // .attr("fill","white")
     .classed("stateText",true);
 
 
 
   // Add X legend
+   
   chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .text("In Poverty (%)")
+    .attr("value", "poverty")
+    .attr("id","xlegends")
     .classed("active",true)
-    .text("In Poverty (%)");
+    .on("click",function(){
+      prevX = activeX;
+      activeX = d3.select(this).attr("value");
+      console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+      d3.selectAll("text#xlegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 40})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .text("Age (Median)")
+    .attr("value", "age")
+    .attr("id","xlegends")
     .classed("inactive",true)
-    .text("Age (Median)");
+    .on("click",function(){
+      prevX = activeX;
+      activeX = d3.select(this).attr("value");
+      console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+      d3.selectAll("text#xlegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   chartGroup.append("text")
     .attr("transform", `translate(${width / 2}, ${height + margin.top + 60})`)
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .text("Household Income (Median)")
+    .attr("value", "income")
+    .attr("id","xlegends")
     .classed("inactive",true)
-    .text("Household Income (Median)");
+    .on("click",function(){
+      prevX = activeX;
+      activeX = d3.select(this).attr("value");
+      console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+      d3.selectAll("text#xlegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   // Add Y legend
   chartGroup.append("text")
@@ -154,8 +190,18 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .attr("value", "obesity")
+    .attr("id","ylegends")
     .classed("inactive",true)
-    .text("Obese (%)");
+    .text("Obese (%)")
+    .on("click",function(){
+      prevY = activeY;
+      activeY = d3.select(this).attr("value");
+      console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+      d3.selectAll("text#ylegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
@@ -163,8 +209,18 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .attr("value", "smokes")
+    .attr("id","ylegends")
     .classed("inactive",true)
-    .text("Smokes (%)");
+    .text("Smokes (%)")
+    .on("click",function(){
+      prevY = activeY;
+      activeY = d3.select(this).attr("value");
+      console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+      d3.selectAll("text#ylegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
@@ -172,25 +228,51 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("x",0 - (height / 2))
     .attr("text-anchor", "middle")
     .attr("text-size", "16px")
+    .attr("value", "healthcare")
+    .attr("id","ylegends")
     .classed("active",true)
-    .text("Lacks Healthcare (%)");
+    .text("Lacks Healthcare (%)")
+    .on("click",function(){
+      prevY = activeY;
+      activeY = d3.select(this).attr("value");
+      console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+      d3.selectAll("text#ylegends").attr("class","inactive");
+      d3.select(this).attr("class","active");
+
+    });
 
   // Step 1: Append a div to the body to create tooltips, assign it a class
   // =======================================================
-  var toolTip = d3.select("div#scatter").append("div")
+  var toolTip = d3.select("div#scatter")
+	.append("div")
+	.style("position", "absolute")
+	.style("visibility", "hidden")
+  // .text("a simple tooltip")
   .classed("d3-tip",true);
 
   // Step 2: Add an onmouseover event to display a tooltip
   // ========================================================
-  circles.on("mouseover", function(d, i) {
-    toolTip.style("display", "block");
-    toolTip.html(`Donut craving level: <strong></strong>` )
-      .style("left", d3.event.pageX + "px")
-      .style("top", d3.event.pageY + "px");
+  // circles.on("mouseover", function(d, i) {
+  //   toolTip.style("visibility", "visible");
+  //   toolTip.html(`Donut craving level: <strong>${d.poverty}</strong>` )
+  //     .style("left", d3.event.pageX + "px")
+  //     .style("top", d3.event.pageY + "px");
+  // })
+
+  circles.on("mouseover", function(d,i){
+    return toolTip.style("visibility", "visible")
+    .html(`<html>${d.state}<br>
+    Poverty: ${d.poverty}<br>
+    Healthcare: ${d.healthcare}</html>` );
   })
+  .on("mousemove", function(){return toolTip
+    .style("top", (d3.event.pageY-margin.top)+"px")
+    .style("left",(d3.event.pageX-margin.left)+"px");})
+  .on("mouseout", function(){return toolTip.style("visibility", "hidden");});
+  
   // Step 3: Add an onmouseout event to make the tooltip invisible
-  .on("mouseout", function() {
-    toolTip.style("display", "none");
-  });
+  // .on("mouseout", function() {
+  //   toolTip.style("display", "none");
+  // });
 
 });
