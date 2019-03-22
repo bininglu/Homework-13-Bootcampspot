@@ -32,11 +32,8 @@ var chartGroup = svg.append("g")
 // =================================
 d3.csv("assets/data/data.csv").then(function(targetData) {
 
-  // Parse the data
   // Format the data and convert to numerical and date values
   // =================================
-
-  // Format the data
   targetData.forEach(function(data) {
     data.poverty = +data.poverty;
     data.age = +data.age;
@@ -49,13 +46,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
 
   // Select active x and y data here
   // =================================
-  // var selectX = "poverty";
-  
-  // targetData.forEach(function(data) {
-  //   var activeX = `data.${selectX}`;
 
-  //   console.log(data.selectX);
-  // });
   var activeX = "poverty";
   var activeY = "healthcare";
   var prevX = activeX;
@@ -73,24 +64,10 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .range([height, 0]);
 
 
-
-  // Set up the y-axis domain
-  // ==============================================
-  // @NEW! determine the max y value
-  // var povertyMax = d3.max(targetData, d => d.poverty);
-
-  // var healthcareMax = d3.max(targetData, d => d.healthcare);
-
-  // // Use the yMax value to set the yLinearScale domain
-  // yLinearScale.domain([0, yMax]);
-
-
   // Create the axes
   // =================================
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
-
-
 
   // Append the axes to the chartGroup
   // ==============================================
@@ -102,32 +79,55 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
   chartGroup.append("g").call(leftAxis);
 
 
+
   // Set up circle generators
   // ==============================================
   // append circles to data points
-  
-  // var activeX = "poverty";
-  // var activeY = "healthcare";
 
+  // function activePlot(){
 
-  var circles = chartGroup.selectAll("circlesGroup1")
-    .data(targetData)
-    .enter()
-    .append("circle")
-    .attr("cx", d => xLinearScale(d.poverty))
-    .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", "15")
-    .classed("stateCircle",true);
-  var texts = chartGroup.selectAll("circlesGroup1")
-    .data(targetData)
-    .enter()
-    .append("text")
-    .attr("text-anchor", "middle")
-    .attr("x", d => xLinearScale(d.poverty))
-    .attr("y", d => yLinearScale(d.healthcare)+5)
-    .text(function(d){return d.abbr})
-    .classed("stateText",true);
+    var circles = chartGroup.selectAll("circlesGroup1")
+      .data(targetData)
+      .enter()
+      .append("circle")
+      // .attr("cx", d => xLinearScale(d.poverty))
+      // .attr("cx", function(d) { return xLinearScale(d.poverty); })
+      .attr("cx", function(d) { 
+        var tempX = activeX;
 
+        targetData.forEach(function(data) {
+          switch (activeX) {
+            case "poverty":
+              data.tempX = +data.poverty;
+              break;
+            case "age":
+              data.tempX = +data.age;
+              break;
+            case "income":
+              data.tempX = +data.income;
+              break;
+            default:
+              data.tempX = +data.poverty;        
+          console.log(data);
+        }});
+        return xLinearScale(d.tempX); 
+      })
+
+      .attr("cy", d => yLinearScale(d.healthcare))
+      .attr("r", "15")
+      .classed("stateCircle",true);
+      
+    var texts = chartGroup.selectAll("circlesGroup1")
+      .data(targetData)
+      .enter()
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", d => xLinearScale(d.poverty))
+      .attr("y", d => yLinearScale(d.healthcare)+5)
+      .text(function(d){return d.abbr})
+      .classed("stateText",true);
+
+  // };
 
 
   // Add X legend
@@ -146,6 +146,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeX is ${activeX}, prevX is ${prevX}`);
       d3.selectAll("text#xlegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
@@ -163,6 +164,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeX is ${activeX}, prevX is ${prevX}`);
       d3.selectAll("text#xlegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
@@ -180,6 +182,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeX is ${activeX}, prevX is ${prevX}`);
       d3.selectAll("text#xlegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
@@ -200,6 +203,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeY is ${activeY}, prevY is ${prevY}`);
       d3.selectAll("text#ylegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
@@ -219,6 +223,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeY is ${activeY}, prevY is ${prevY}`);
       d3.selectAll("text#ylegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
@@ -238,6 +243,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
       console.log(`activeY is ${activeY}, prevY is ${prevY}`);
       d3.selectAll("text#ylegends").attr("class","inactive");
       d3.select(this).attr("class","active");
+      activePlot();
 
     });
 
