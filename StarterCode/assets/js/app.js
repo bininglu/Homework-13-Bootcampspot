@@ -77,34 +77,35 @@ function renderYAxes(newYScale, yAxis) {
 
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, textsGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
+function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
 
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]))
     .attr("cy", d => newYScale(d[chosenYAxis]));
 
-  // circlesGroup.selectAll("text")
-  //   .transition()
-  //   .duration(1000)
-  //   .attr("x", d => newXScale(d[chosenXAxis]))
-  //   .attr("y", d => newYScale(d[chosenYAxis])+5);
-
-  textsGroup = circlesGroup.selectAll("text").transition()
+  circlesGroup.selectAll("g.chart").transition()
   .duration(1000)
   .attr("dx", d => xLinearScale(d[chosenXAxis]))
-  .attr("dy", d => yLinearScale(d[chosenYAxis])+5);
+  .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
 
- 
-  //  textsGroup = circlesGroup.selectAll("text")
-  //   .attr("dx", d => xLinearScale(d[chosenXAxis]))
-  //   .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
-    // .classed("stateText",true);
-  return [circlesGroup, textsGroup];
+  return circlesGroup;
+}
+
+// function used for updating texts group with a transition to
+// new texts
+function renderTexts(textsGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
+
+  textsGroup.transition()
+    .duration(1000)
+    .attr("dx", d => newXScale(d[chosenXAxis]))
+    .attr("dy", d => newYScale(d[chosenYAxis])+5);
+
+  return textsGroup;
 }
 
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup) {
+function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   
   switch (chosenXAxis) {
     case "poverty":
@@ -135,6 +136,11 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup) {
   };
 
 
+  // circlesGroup.selectAll("text")
+  //   .attr("dx", d => xLinearScale(d[chosenXAxis]))
+  //   .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
+    // .text(function(d){return d["abbr"]})
+    // .classed("stateText",true);
   // =======================================================
   var toolTip = d3.select("div#scatter")
     .append("div")
@@ -173,8 +179,9 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup) {
   //     toolTip.hide(data);
   //   });
 
-  return [circlesGroup, textsGroup];
+  return circlesGroup;
 }
+
 
 
 
@@ -233,7 +240,9 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .attr("r", 15)
     .classed("stateCircle",true);
 
-  var texts = chartGroup.selectAll("g.chart")
+  // ```````````~~~~~~~~~~~~~~~~~~~~~~~
+  // append initial circle labels
+  var textsGroup = chartGroup.selectAll("g.chart")
     .data(targetData)
     .enter()
     .append("text")
@@ -302,7 +311,7 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
     .text("Lacks Healthcare (%)");
 
   // updateToolTip function above csv import
-  var [circlesGroup, textsGroup] = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup);
+  var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
   // x axis labels event listener
   xlabelsGroup.selectAll("text")
@@ -324,10 +333,12 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
         xAxis = renderXAxes(xLinearScale, xAxis);
 
         // updates circles with new x,y values
-        [circlesGroup, textsGroup] = renderCircles(circlesGroup, textsGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        // updates texts with new x,y values
+        textsGroup = renderTexts(textsGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
         // updates tooltips with new info
-        [circlesGroup, textsGroup] = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup);
+        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
         // changes classes to change bold text
         switch (chosenXAxis) {
@@ -348,14 +359,14 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
             break;   
         }
         
-        chartGroup.selectAll("g.chart")
-          .data(targetData)
-          .enter()
-          .append("text")
-          .attr("dx", d => xLinearScale(d[chosenXAxis]))
-          .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
-          .text(function(d){return d["abbr"]})
-          .classed("stateText",true);
+        // chartGroup.selectAll("g.chart")
+        //   .data(targetData)
+        //   .enter()
+        //   .append("text")
+        //   .attr("dx", d => xLinearScale(d[chosenXAxis]))
+        //   .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
+        //   .text(function(d){return d["abbr"]})
+        //   .classed("stateText",true);
       
        
       }
@@ -381,10 +392,12 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
         yAxis = renderYAxes(yLinearScale, yAxis);
 
         // updates circles with new x,y values
-        [circlesGroup, textsGroup] = renderCircles(circlesGroup, textsGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        // updates texts with new x,y values
+        textsGroup = renderTexts(textsGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
         // updates tooltips with new info
-        [circlesGroup, textsGroup] = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, textsGroup);
+        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
         // changes classes to change bold text
         switch (chosenYAxis) {
@@ -411,4 +424,194 @@ d3.csv("assets/data/data.csv").then(function(targetData) {
   });
   
 
+  //   // Append the axes to the chartGroup
+  //   // ==============================================
+  //   // Add x-axis
+  //   chartGroup.append("g")
+  //     .attr("transform", `translate(0, ${height})`)
+  //     .call(bottomAxis);
+  //   // Add y-axis
+  //   chartGroup.append("g").call(leftAxis);
+
+  // function activePlot(activeX, activeY){
+
+  //   // Create the scales for the chart
+  //   // =================================
+  //   var xLinearScale = d3.scaleLinear()
+  //     .domain(d3.extent(targetData, d => d.tempX))
+  //     .range([0, width]);
+
+  //   var yLinearScale = d3.scaleLinear()
+  //     .domain(d3.extent(targetData, d => d.tempY))
+  //     .range([height, 0]);
+
+
+
   
+  //   // Set up circle generators
+  //   // ==============================================
+  //   // append circles to data points
+  //   var circles = chartGroup.selectAll("circlesGroup1")
+  //     .data(targetData)
+  //     .enter()
+  //     .append("circle")
+  //     .attr("cx", d => xLinearScale(d.tempX))
+  //     .attr("cy", d => yLinearScale(d.tempY))
+  //     .attr("r", "15")
+  //     .classed("stateCircle",true);
+      
+      
+  //   var texts = chartGroup.selectAll("circlesGroup1")
+  //     .data(targetData)
+  //     .enter()
+  //     .append("text")
+  //     .attr("text-anchor", "middle")
+  //     .attr("x", d => xLinearScale(d.tempX))
+  //     .attr("y", d => yLinearScale(d.tempY)+5)
+  //     .text(function(d){return d.abbr})
+  //     .classed("stateText",true);
+
+  //       // =======================================================
+  //   var toolTip = d3.select("div#scatter")
+  //     .append("div")
+  //     .style("position", "absolute")
+  //     .style("visibility", "hidden")
+  //     .classed("d3-tip",true);
+
+  //     circles.on("mouseover", function(d,i){
+  //       return toolTip.style("visibility", "visible")
+  //       .html(`<html>${d.state}<br>
+  //       Poverty: ${d.tempX}<br>
+  //       Healthcare: ${d.tempY}</html>` );
+  //     })
+  //     .on("mousemove", function(){return toolTip
+  //       .style("top", (d3.event.pageY-margin.top)+"px")
+  //       .style("left",(d3.event.pageX-margin.left)+"px");})
+  //     .on("mouseout", function(){return toolTip.style("visibility", "hidden");});
+      
+  
+
+  // };
+
+
+  // // Add X legend
+   
+  // d3.select("g.chart").append("text")
+  //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .text("In Poverty (%)")
+  //   .attr("value", "poverty")
+  //   .attr("id","xlegends")
+  //   .classed("active",true)
+  //   .on("click",function(){
+  //     prevX = activeX;
+  //     activeX = d3.select(this).attr("value");
+  //     console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+  //     d3.selectAll("text#xlegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+  //   });
+
+  //   d3.select("g.chart").append("text")
+  //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 40})`)
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .text("Age (Median)")
+  //   .attr("value", "age")
+  //   .attr("id","xlegends")
+  //   .classed("inactive",true)
+  //   .on("click",function(){
+  //     prevX = activeX;
+  //     activeX = d3.select(this).attr("value");
+  //     console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+  //     d3.selectAll("text#xlegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+
+  //   });
+
+  //   d3.select("g.chart").append("text")
+  //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 60})`)
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .text("Household Income (Median)")
+  //   .attr("value", "income")
+  //   .attr("id","xlegends")
+  //   .classed("inactive",true)
+  //   .on("click",function(){
+  //     prevX = activeX;
+  //     activeX = d3.select(this).attr("value");
+  //     console.log(`activeX is ${activeX}, prevX is ${prevX}`);
+  //     d3.selectAll("text#xlegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+
+  //   });
+
+  // // Add Y legend
+  // d3.select("g.chart").append("text")
+  //   .attr("transform", "rotate(-90)")
+  //   .attr("y", 0 - margin.left+20)
+  //   .attr("x",0 - (height / 2))
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .attr("value", "obesity")
+  //   .attr("id","ylegends")
+  //   .classed("inactive",true)
+  //   .text("Obese (%)")
+  //   .on("click",function(){
+  //     prevY = activeY;
+  //     activeY = d3.select(this).attr("value");
+  //     console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+  //     d3.selectAll("text#ylegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+
+  //   });
+
+  //   d3.select("g.chart").append("text")
+  //   .attr("transform", "rotate(-90)")
+  //   .attr("y", 0 - margin.left+40)
+  //   .attr("x",0 - (height / 2))
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .attr("value", "smokes")
+  //   .attr("id","ylegends")
+  //   .classed("inactive",true)
+  //   .text("Smokes (%)")
+  //   .on("click",function(){
+  //     prevY = activeY;
+  //     activeY = d3.select(this).attr("value");
+  //     console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+  //     d3.selectAll("text#ylegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+
+  //   });
+
+  //   d3.select("g.chart").append("text")
+  //   .attr("transform", "rotate(-90)")
+  //   .attr("y", 0 - margin.left+60)
+  //   .attr("x",0 - (height / 2))
+  //   .attr("text-anchor", "middle")
+  //   .attr("text-size", "16px")
+  //   .attr("value", "healthcare")
+  //   .attr("id","ylegends")
+  //   .classed("active",true)
+  //   .text("Lacks Healthcare (%)")
+  //   .on("click",function(){
+  //     prevY = activeY;
+  //     activeY = d3.select(this).attr("value");
+  //     console.log(`activeY is ${activeY}, prevY is ${prevY}`);
+  //     d3.selectAll("text#ylegends").attr("class","inactive");
+  //     d3.select(this).attr("class","active");
+  //     activePlot(activeX, activeY);
+  //   });
+
+
+
+  //   activePlot(activeX, activeY);
+  // });
+
+
